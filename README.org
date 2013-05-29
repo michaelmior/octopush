@@ -2,23 +2,43 @@
 [[./usr/share/octopush/Octopush_Logo_RGB.png]]
 
 ** What is Octopush
-   Octopush is a push server for creating real-time web-applications
+   Octopush is a push server for creating real-time web-applications.
 
 ** Features
 **** Easily integrated
-     Only a few lines of javascript code is needed to get started
+     Only a few lines of javascript code is needed to get started.
+     More advanced features (e.g auth) requires more setup.
 
 **** Cross-browser
-     Thanks to socket.io cross-browser support is a non-issue
+     Thanks to socket.io we have excellent cross-browser support
 
 **** Users, channels and authentication
-     Authentication is handled through your own service with cookies, no need to have some special token for authentication
+     Authentication is handled through your own service with cookies, no need to have some special token for authentication.
 
 **** Effortless scaling
-     Thanks to ZeroMQ scaling horizontally is just a matter of adding more nodes and having users connect to them
+     Thanks to ZeroMQ scaling horizontally is just a matter of adding more nodes and having users connect to them, the backend will automatically start to receive messages
 
 ** Usage
-   TODO
+*** Client-side
+    : var Push = new Octopush("http://127.0.0.1:3000")
+    : 
+    : //Receive an event
+    : Push.on("example", function(data) {
+    :     alert(JSON.stringify(data));
+    : }
+    : 
+    : //Authenticate a user
+    : Push.auth();
+    : 
+    : //Join a channel
+    : Push.join("examplechan");
+    : //Part a channel
+    : Push.part("examplechan");
 
+    More features like channel-join/part events will be added
+
+*** Server-side
+    : octopush --host <bind backend to this host (default: tcp://127.0.0.1:3000)> --port <bind frontend to this port (default: 3001) --authurl <auth against this backend>>
+    
 ** License
    [[http://www.gnu.org/licenses/agpl.html][GNU AGPL]]
