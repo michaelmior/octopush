@@ -1,0 +1,48 @@
+* Octopush protocol specification
+
+** HTTP auth API
+
+*** User auth
+Auth works by relaying the clients cookies to the auth backend with a HTTP GET request.
+A successful auth is indicated by HTTP status code 200 and the user id as response body
+Any other status code is treated as a failure
+
+** ZeroMQ pub/sub API
+
+*** Fields
+|---------+------------------+--------------+---------+-----------+---------|
+| bytes   |              1-2 |            3 | 4       |           |         |
+|---------+------------------+--------------+---------+-----------+---------|
+| field   | protocol version | message type | Channel | delimiter | payload |
+| example |               01 |            2 | TEST    |           | {}      |
+|---------+------------------+--------------+---------+-----------+---------|
+
+**** Protocol version
+Protocol version is an integer from 00 to 99
+The current version is 01
+
+**** Message type
+Message type is an integer with the following enum valu
+|-----+-----------|
+| key | value     |
+|-----+-----------|
+|   0 | Broadcast |
+|   1 | Channel   |
+|   2 | User      |
+|-----+-----------|
+
+**** Channel
+Channel is the channel or userid
+Channel is not mandatory for broadcast messages
+
+**** Delimiter
+The header delimiter is a space
+
+**** Payload
+Payload is a string-encoded JSON object with this structure:
+: {
+:     "e": "example",
+:     "p": {}
+: }
+Where e is the event and p is the user data (any valid JSON object)
+

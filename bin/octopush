@@ -1,0 +1,173 @@
+#!/usr/bin/env node
+//-*- mode: javascript -*-
+/*
+  Octopush - A scale out realtime websocket-push server
+  Copyright (C) 2012 Adam Höse
+
+  This program is free software: you can redistribute it and/or modify
+  it under the terms of the GNU Affero General Public License as
+  published by the Free Software Foundation, either version 3 of the
+  License, or (at your option) any later version.
+  
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU Affero General Public License for more details.
+  
+  You should have received a copy of the GNU Affero General Public License
+  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  
+*/
+
+PROTO_VER = "01";
+
+var api = {
+    /*
+      ZMQ API
+    */
+
+    init: function(host) {
+
+	//Set up socket
+	this.socket = require('zmq').socket('sub');
+	this.socket.connect(host);
+	this.socket.subscribe(PROTO_VER + message.types.bcast); //Broadcast subscription
+	
+	//Message relay
+	this.socket.on('message', function(msg) {
+
+	    msg = message.parse(msg);
+	    switch(msg[0][0]) {
+	    case message.types.bcast:
+		io.sockets.emit("message", msg[1]);
+		break;
+	    case message.types.chan:
+		io.sockets.in(message.types.chan + msg[0].slice(1,msg[0].length)).emit("message", msg[1]);
+		break;
+	    }
+	});
+    }
+}
+
+var message = {
+    /*
+      Message parsing and statics
+    */
+
+    parse: function(msg) {
+	msg = msg.toString();
+	var i = msg.indexOf(" ");
+	msg = [msg.slice(0,i), JSON.parse(msg.slice(i+1))]
+	return msg;
+    },
+
+    types: {
+	bcast: "0",
+	chan: "1",
+	user: "2"
+    }
+
+}
+
+/*
+  Websocket listen & socket.io provider
+*/
+var express = require("express"),
+app = express(),
+http = require('http'),
+server = http.createServer(app),
+io = require('socket.io').listen(server);
+app.get('/', function (req, res) {
+    res.sendfile(__dirname.replace(/bin$/, "") + 'usr/share/octopush/index.html');
+});
+
+io.sockets.on("connection", function(socket) {
+    /*
+      Websocket handling
+     */
+
+    socket.user = false,
+
+    socket.on("auth", function(data) {
+
+	if(typeof(argv.authurl) === "undefined") {
+	    socket.emit("auth", 2);
+	    return;
+	}
+
+	//User auth request
+	var req = http.request({
+	    hostname: argv.authurl.hostname,
+	    port: argv.authurl.port,
+	    path: argv.authurl.path,
+	    method: 'GET',
+	    headers: {
+		Cookie: data
+	    }
+	}, function(resp) {
+	    var user = "";
+	    resp.on("data", function(chunk) {
+		user+=chunk;
+	    });
+	    resp.on("end", function() {
+		if(resp.statusCode === 200) {
+		    socket.user = user;
+		    socket.emit("auth", 0);
+		    api.socket.subscribe(PROTO_VER + message.types.user + socket.user);
+		} else {
+		    socket.emit("auth", 1);
+		}
+	    });
+	}).end();
+	
+    });
+
+    socket.on("join", function(data) {
+	if(!("/" + message.types.chan + data in io.sockets.manager.roomClients[socket.id])) {
+	    socket.join(message.types.chan + data);
+	    api.socket.subscribe(PROTO_VER + message.types.chan + data);
+	}
+    });
+
+    socket.on("part", function(data) {
+	if("/" + message.types.chan + data in io.sockets.manager.roomClients[socket.id]) {
+	    socket.leave(message.types.chan + data);
+	    api.socket.unsubscribe(PROTO_VER + message.types.chan + data);
+	}
+    });
+
+    socket.on("disconnect", function() {
+
+	//ZMQ channel subscription cleanup
+	for(var i in io.sockets.manager.roomClients[socket.id]) {
+	    if(i !== "") {
+		i=i.slice(1, i.length);
+		if("/" + i in io.sockets.manager.roomClients[socket.id]) {
+		    api.socket.unsubscribe(PROTO_VER + message.types.chan + i);
+		}
+	    }
+	}
+
+	//ZMQ user subscription cleanup
+	if(socket.authed != false) {
+	    api.socket.subscribe(PROTO_VER + message.types.user + socket.user);
+	}
+
+    });
+});
+
+/*
+  Init
+*/
+var argv = require('optimist')
+    .usage('Usage: $0 -h "tcp://127.0.0.1:3000 -p 3001 --authurl "http://127.0.0.1:8080/ws-auth"')
+    .default("host", "tcp://127.0.0.1:3000")
+    .default("port", 3001)
+    .default("authurl", undefined) //HTTP-auth url
+    .default("sdebug", 1) //Socket.io debug
+    .argv;
+if(typeof(argv.authurl) !== "undefined") {
+    argv.authurl = url.parse(argv.authurl);
+}
+server.listen(argv.port);
+api.init(argv.host);

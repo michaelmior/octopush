@@ -1,0 +1,26 @@
+{
+    "name": "octopush",
+    "description": "A scale out real-time websocket-push server",
+    "version": "0.1",
+    "homepage": "http://github.com/adisbladis/octopush",
+    "keywords": [
+	"handlebars mustache template html"
+    ],
+    "repository": {
+        "type": "git",
+	"url": "git://github.com/adisbladis/octopush.git"
+    },
+    "engines": {
+	"node": ">=0.10.6"
+    },
+    "dependencies": {
+	"optimist": ">=0.5",
+	"socket.io": ">=0.9",
+	"zmq": ">=2.4"
+	"zmq": ">=3.2"
+    },
+    "bin": {
+	"octopush": "bin/octopush"
+    },
+    "optionalDependencies": {}
+}
