@@ -43,9 +43,7 @@ Octopush is a push server for creating real-time web-applications.
      Thanks to ZeroMQ scaling horizontally is just a matter of adding more nodes and having users connect to them, the backend will automatically start to receive messages
 
 ** Backend libraries
-   |--------+-----------------------------------------------|
-   | Python | [[https://github.com/adisbladis/octopush-python]] |
-   |--------+-----------------------------------------------|
+*** Python: [[https://github.com/adisbladis/octopush-python]]
 
 ** License
    [[http://www.gnu.org/licenses/agpl.html][GNU AGPL]]
