@@ -38,7 +38,10 @@
     More features like channel-join/part events will be added
 
 *** Server-side
-    : octopush --host <bind backend to this host (default: tcp://127.0.0.1:3000)> --port <bind frontend to this port (default: 3001) --authurl <auth against this backend>>
+    : octopush
+    : --host <bind backend to this host (default: tcp://127.0.0.1:3000)>
+    : --port <bind frontend to this port (default: 3001)
+    : --authurl <auth against this backend>>
     
 ** License
    [[http://www.gnu.org/licenses/agpl.html][GNU AGPL]]

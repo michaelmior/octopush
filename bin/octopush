@@ -207,5 +207,6 @@ var argv = require('optimist')
     .argv;
 if(typeof(argv.authurl) !== "undefined")
     argv.authurl = url.parse(argv.authurl);
+io.set('log level', 1)
 server.listen(argv.port);
 api.init(argv.host);
