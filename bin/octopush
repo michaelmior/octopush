@@ -19,7 +19,7 @@
   
 */
 
-PROTO_VER = "01";
+PROTO_VER = "0";
 
 var api = {
     /*
@@ -34,15 +34,19 @@ var api = {
 	this.socket.subscribe(PROTO_VER + message.types.bcast); //Broadcast subscription
 	
 	//Message relay
-	this.socket.on('message', function(msg) {
-
-	    msg = message.parse(msg);
-	    switch(msg[0][0]) {
+	this.socket.on('message', function(envelope, msg) {
+	    msg = JSON.parse(msg.toString());
+	    envelope = envelope.toString();
+	    console.log(envelope);
+	    switch(envelope[1]) {
 	    case message.types.bcast:
-		io.sockets.emit("message", msg[1]);
+		io.sockets.emit("message", msg);
 		break;
 	    case message.types.chan:
-		io.sockets.in(message.types.chan + msg[0].slice(1,msg[0].length)).emit("message", msg[1]);
+		io.sockets.in(message.types.chan + envelope.slice(2, envelope.length)).emit("message", msg)
+		break;
+	    case message.types.user:
+		io.sockets.in(message.types.user + envelope.slice(2, envelope.length)).emit("message", msg)
 		break;
 	    }
 	});
@@ -207,6 +211,6 @@ var argv = require('optimist')
     .argv;
 if(typeof(argv.authurl) !== "undefined")
     argv.authurl = url.parse(argv.authurl);
-io.set('log level', 1)
+io.set('log level', argv.sdebug)
 server.listen(argv.port);
 api.init(argv.host);

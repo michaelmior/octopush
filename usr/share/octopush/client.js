@@ -6,8 +6,8 @@ function Octopush(url) {
     this.channels = [],
     this.socket = io.connect(url);
     this.socket.on("message", function(data) {
-	if(typeof(that.events[data.t]) === "function")
-	    that.events[data.t](data.p);
+	if(typeof(that.events[data.e]) === "function")
+	    that.events[data.e](data.p);
     });
 
     //Internal states and error handling

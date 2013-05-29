@@ -54,15 +54,15 @@
 
 *** Fields
 |---------+------------------+--------------+---------+-----------+---------|
-| bytes   |              1-2 |            3 | 4       |           |         |
+| bytes   |                1 |            2 | 3       |           |         |
 |---------+------------------+--------------+---------+-----------+---------|
 | field   | protocol version | message type | Channel | delimiter | payload |
-| example |               01 |            2 | TEST    |           | {}      |
+| example |                0 |            2 | TEST    |           | {}      |
 |---------+------------------+--------------+---------+-----------+---------|
 
 **** Protocol version
-     Protocol version is an integer from 00 to 99
-     The current version is 01
+     Protocol version is an integer from 0 to 9
+     The current version is 0
 
 **** Message type
      Message type is an integer with the following enum valu
