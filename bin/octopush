@@ -2,7 +2,7 @@
 //-*- mode: javascript -*-
 /*
   Octopush - A scale out realtime websocket-push server
-  Copyright (C) 2012 Adam Höse
+  Copyright (C) 2013 Adam Höse
 
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU Affero General Public License as
