@@ -1,5 +1,5 @@
 * Octopush
-[[./usr/share/octopush/Octopush_Logo_RGB.svg]]
+[[./usr/share/octopush/Octopush_Logo_RGB.png]]
 
 ** What is Octopush
    TODO
