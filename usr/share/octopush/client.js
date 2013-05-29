@@ -60,8 +60,3 @@ function Octopush(url) {
     }
 
 }
-
-var Push = new Octopush("http://localhost:3001");
-Push.on("example", function(data) {
-    console.log(data);
-});
