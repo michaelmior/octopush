@@ -134,6 +134,9 @@ io.sockets.on("connection", function(socket) {
 
 	    case "!": //Private channel
 
+		if(typeof(argv.authurl) === "undefined")
+		    return;
+
 		//Channel auth request
 		var req = http.request({
 		    hostname: argv.authurl.hostname,
@@ -145,17 +148,15 @@ io.sockets.on("connection", function(socket) {
 		    }
 		}, function(resp) {
 		    resp.on("end", function() {
-			if(resp.statusCode === 200) {
+			if(resp.statusCode === 200)
 			    callback();
-			}
 		    });
 		}).end();
 		break;
 
 	    case "#": //Authed channel
-		if(socket.user != false) {
+		if(socket.user != false)
 		    callback();
-		}
 		break;
 
 	    default: //Public channel
@@ -179,17 +180,14 @@ io.sockets.on("connection", function(socket) {
 	for(var i in io.sockets.manager.roomClients[socket.id]) {
 	    if(i !== "") {
 		i=i.slice(1, i.length);
-		if("/" + i in io.sockets.manager.roomClients[socket.id]) {
+		if("/" + i in io.sockets.manager.roomClients[socket.id])
 		    api.socket.unsubscribe(PROTO_VER + message.types.chan + i);
-		}
 	    }
 	}
 
 	//ZMQ user subscription cleanup
-	if(socket.authed != false) {
+	if(socket.authed != false)
 	    api.socket.subscribe(PROTO_VER + message.types.user + socket.user);
-	}
-
     });
 });
 
@@ -203,8 +201,7 @@ var argv = require('optimist')
     .default("authurl", undefined) //HTTP-auth url
     .default("sdebug", 1) //Socket.io debug
     .argv;
-if(typeof(argv.authurl) !== "undefined") {
+if(typeof(argv.authurl) !== "undefined")
     argv.authurl = url.parse(argv.authurl);
-}
 server.listen(argv.port);
 api.init(argv.host);
