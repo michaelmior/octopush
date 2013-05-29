@@ -123,9 +123,46 @@ io.sockets.on("connection", function(socket) {
     });
 
     socket.on("join", function(data) {
+
+	var callback = function() {
+	    socket.join(message.types.chan + data.chan);
+	    api.socket.subscribe(PROTO_VER + message.types.chan + data.chan);
+	}
+
 	if(!("/" + message.types.chan + data in io.sockets.manager.roomClients[socket.id])) {
-	    socket.join(message.types.chan + data);
-	    api.socket.subscribe(PROTO_VER + message.types.chan + data);
+	    switch(data.chan[0]) {
+
+	    case "!": //Private channel
+
+		//Channel auth request
+		var req = http.request({
+		    hostname: argv.authurl.hostname,
+		    port: argv.authurl.port,
+		    path: argv.authurl.path + "?chan=" + data.chan,
+		    method: 'GET',
+		    headers: {
+			Cookie: data.cookie
+		    }
+		}, function(resp) {
+		    resp.on("end", function() {
+			if(resp.statusCode === 200) {
+			    callback();
+			}
+		    });
+		}).end();
+		break;
+
+	    case "#": //Authed channel
+		if(socket.user != false) {
+		    callback();
+		}
+		break;
+
+	    default: //Public channel
+		callback();
+		break;
+
+	    }
 	}
     });
 

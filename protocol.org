@@ -3,9 +3,52 @@
 ** HTTP auth API
 
 *** User auth
-Auth works by relaying the clients cookies to the auth backend with a HTTP GET request.
-A successful auth is indicated by HTTP status code 200 and the user id as response body
-Any other status code is treated as a failure
+    Auth works by relaying the clients cookies to the auth backend with a HTTP GET request.
+    A successful auth is indicated by HTTP status code 200 and the user id as response body
+    Any other status code is treated as a failure
+
+*** Private channel auth
+    Private channels are authed much in the same way as User auth except for that the GET-request has a GET param called chan which is the name of the channel
+    Status code 200 is is treated as OK and any other code is treated as a failure and no response body is needed.
+
+** Socketio API
+   This is the internal API that the javascript client is built upon
+
+*** Generic errors
+    Generic errors are sent with event "error" and error message as data
+
+*** Auth errors
+    Auth status codes are sent with event "auth" and one of the following codes
+|-----+--------------------------------|
+| key | value                          |
+|-----+--------------------------------|
+|   0 | Auth success                   |
+|   1 | Auth failure                   |
+|   2 | Server not configured for auth |
+|-----+--------------------------------|
+
+*** Public/authed/private channels
+    There are three types of channels in Octopush: public, authed and private
+    Public channels can be joined without any auth
+    Authed channels can only be joined by an authed user
+    Private channels are authed with the HTTP auth API
+    
+    Authed channel names begin with a #, private channels begin with an ! and public channels begin with any other ascii-character
+
+*** Channel join
+    Channels are joined by emitting an event "join" with a javascript object with the following structure:
+: {
+:     chan: "channel-name",
+:     cookie: document.cookie
+: }
+    Cookie is only needed for private channels
+
+*** Channel part
+    Channels are parted by emitting an event "part" with the channel name as payload
+
+*** Channel states
+    Every time a channel is joined or parted an event "chans" is emitted with the current channel subscriptions
+    This is for re-joining all channels when a connection is re-established after a failure
 
 ** ZeroMQ pub/sub API
 
@@ -18,11 +61,11 @@ Any other status code is treated as a failure
 |---------+------------------+--------------+---------+-----------+---------|
 
 **** Protocol version
-Protocol version is an integer from 00 to 99
-The current version is 01
+     Protocol version is an integer from 00 to 99
+     The current version is 01
 
 **** Message type
-Message type is an integer with the following enum valu
+     Message type is an integer with the following enum valu
 |-----+-----------|
 | key | value     |
 |-----+-----------|
@@ -32,17 +75,16 @@ Message type is an integer with the following enum valu
 |-----+-----------|
 
 **** Channel
-Channel is the channel or userid
-Channel is not mandatory for broadcast messages
+     Channel is the channel or userid
+     Channel is not mandatory for broadcast messages
 
 **** Delimiter
-The header delimiter is a space
+     The header delimiter is a space
 
 **** Payload
-Payload is a string-encoded JSON object with this structure:
+     Payload is a string-encoded JSON object with this structure:
 : {
 :     "e": "example",
 :     "p": {}
 : }
-Where e is the event and p is the user data (any valid JSON object)
-
+     Where e is the event and p is the user data (any valid JSON object)

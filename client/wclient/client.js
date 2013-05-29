@@ -3,12 +3,14 @@ function Octopush(url) {
     //Base setup
     var that = this;
     this.events = {},
+    this.channels = [],
     this.socket = io.connect(url);
     this.socket.on("message", function(data) {
 	if(typeof(that.events[data.t]) === "function")
 	    that.events[data.t](data.p);
     });
 
+    //Internal states and error handling
     this.socket.on("error", function(data) {
 	if(typeof(console) !== "undefined") {
 	    console.error(data);
@@ -35,6 +37,9 @@ function Octopush(url) {
 
 	    }
 	}
+    });
+    this.sockets.on("chans", function(data) {
+	that.chans = data;
     });
 
     //User functions
