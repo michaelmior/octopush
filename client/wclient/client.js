@@ -38,7 +38,7 @@ function Octopush(url) {
 	    }
 	}
     });
-    this.sockets.on("chans", function(data) {
+    this.socket.on("chans", function(data) {
 	that.chans = data;
     });
 
@@ -47,7 +47,10 @@ function Octopush(url) {
 	that.events[event] = callback;
     }
     this.join = function(channel) {
-	that.socket.emit("join", channel);
+	var obj = {chan: channel}
+	if(channel[0] === "!")
+	    obj.cookie = document.cookie
+	that.socket.emit("join", {chan: channel});
     }
     this.part = function(channel) {
 	that.socket.emit("part", channel);
