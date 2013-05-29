@@ -2,10 +2,20 @@
 [[./usr/share/octopush/Octopush_Logo_RGB.png]]
 
 ** What is Octopush
-   TODO
+   Octopush is a push server for creating real-time web-applications
 
 ** Features
-   TODO
+**** Easily integrated
+     Only a few lines of javascript code is needed to get started
+
+**** Cross-browser
+     Thanks to socket.io cross-browser support is a non-issue
+
+**** Users, channels and authentication
+     Authentication is handled through your own service with cookies, no need to have some special token for authentication
+
+**** Effortless scaling
+     Thanks to ZeroMQ scaling horizontally is just a matter of adding more nodes and having users connect to them
 
 ** Usage
    TODO
