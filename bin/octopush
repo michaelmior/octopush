@@ -80,6 +80,9 @@ io = require('socket.io').listen(server);
 app.get('/', function (req, res) {
     res.sendfile(__dirname.replace(/bin$/, "") + 'usr/share/octopush/index.html');
 });
+app.get('/client.js', function (req, res) {
+    res.sendfile(__dirname.replace(/bin$/, "") + 'usr/share/octopush/client.js');
+});
 app.use("/static", express.static(__dirname.replace(/bin$/, "") + 'usr/share/octopush/'))
 
 io.sockets.on("connection", function(socket) {
