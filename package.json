@@ -22,5 +22,11 @@
     "bin": {
 	"octopush": "bin/octopush"
     },
+    "files": [
+	"usr/"
+    ],
+    "directories": [
+	"usr/"
+    ],
     "optionalDependencies": {}
 }
