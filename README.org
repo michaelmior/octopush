@@ -1,8 +1,7 @@
 * Octopush
 [[./usr/share/octopush/Octopush_Logo_RGB.png]]
 
-** What is Octopush
-   Octopush is a push server for creating real-time web-applications.
+Octopush is a push server for creating real-time web-applications.
 
 ** Features
 **** Easily integrated
