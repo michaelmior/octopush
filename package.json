@@ -4,7 +4,7 @@
     "version": "0.1",
     "homepage": "http://github.com/adisbladis/octopush",
     "keywords": [
-	"handlebars mustache template html"
+	"websocket html5 push zmq zeromq socketio socket.io"
     ],
     "repository": {
         "type": "git",
