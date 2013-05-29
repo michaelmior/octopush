@@ -1,7 +1,7 @@
 {
     "name": "octopush",
     "description": "A scale out real-time websocket-push server",
-    "version": "0.1",
+    "version": "0.0.1",
     "homepage": "http://github.com/adisbladis/octopush",
     "keywords": [
 	"websocket html5 push zmq zeromq socketio socket.io"
