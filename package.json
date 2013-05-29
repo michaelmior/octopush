@@ -16,7 +16,8 @@
     "dependencies": {
 	"optimist": ">=0.5",
 	"socket.io": ">=0.9",
-	"zmq": ">=2.4"
+	"zmq": ">=2.4",
+	"express": ">=3.2.5"
     },
     "bin": {
 	"octopush": "bin/octopush"
