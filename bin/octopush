@@ -37,7 +37,7 @@ var api = {
 	this.socket.on('message', function(envelope, msg) {
 	    msg = JSON.parse(msg.toString());
 	    envelope = envelope.toString();
-	    console.log(envelope);
+
 	    switch(envelope[1]) {
 	    case message.types.bcast:
 		io.sockets.emit("message", msg);
