@@ -99,9 +99,10 @@ if(argv.ssl) {
 	throw Error("Cert or keyfile undefined")
 
     var http = require('https');
+    var fs = require("fs");
     server = http.createServer({
-	key: argv.key,
-	cert: argv.cert
+	key: fs.readFileSync(argv.key),
+	cert: fs.readFileSync(argv.cert)
     },app);
 
 } else {
