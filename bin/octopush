@@ -21,6 +21,21 @@
 
 PROTO_VER = "0";
 
+var argv = require('optimist')
+    .usage('Usage: $0 --host "tcp://127.0.0.1:3000 --port 3001 --authurl "http://127.0.0.1:8080/ws-auth"')
+    .default("host", "tcp://127.0.0.1:3000") //Backen listen host
+    .default("port", 3001) //Web listen port
+    .default("authurl", undefined) //HTTP-auth url
+    .default("sdebug", 1) //Socket.io debug
+    .default("user", false) //Setuid to this user
+    .default("group", false) //Setgid to this group
+    .default("ssl", false) //Use ssl
+    .default("key", undefined) //ssl keyfile
+    .default("cert", undefined) //ssl certfile
+    .argv;
+if(typeof(argv.authurl) !== "undefined")
+    argv.authurl = url.parse(argv.authurl);
+
 var api = {
     /*
       ZMQ API
@@ -77,10 +92,25 @@ var message = {
   Websocket listen & socket.io provider
 */
 var express = require("express"),
-app = express(),
-http = require('http'),
-server = http.createServer(app),
-io = require('socket.io').listen(server);
+app = express();
+if(argv.ssl) {
+
+    if(typeof(argv.key) === "undefined" || typeof(argv.cert) === "undefined")
+	throw Error("Cert or keyfile undefined")
+
+    var http = require('https');
+    server = http.createServer({
+	key: argv.key,
+	cert: argv.cert
+    },app);
+
+} else {
+
+    var http = require('http'),
+    server = http.createServer(app);
+
+}
+var io = require('socket.io').listen(server);
 
 //Static resources
 app.get('/', function (req, res) {
@@ -207,22 +237,13 @@ io.sockets.on("connection", function(socket) {
 /*
   Init
 */
-var argv = require('optimist')
-    .usage('Usage: $0 --host "tcp://127.0.0.1:3000 --port 3001 --authurl "http://127.0.0.1:8080/ws-auth"')
-    .default("host", "tcp://127.0.0.1:3000")
-    .default("port", 3001)
-    .default("authurl", undefined) //HTTP-auth url
-    .default("sdebug", 1) //Socket.io debug
-    .default("user", false)
-    .default("group", false)
-    .argv;
-if(typeof(argv.authurl) !== "undefined")
-    argv.authurl = url.parse(argv.authurl);
 io.set('log level', argv.sdebug)
 api.init(argv.host);
 server.listen(argv.port, function() {
+
     if(argv.user !== false)
 	process.setuid(argv.user);
     if(argv.group !== false)
 	process.setgid(argv.group);
+
 });
