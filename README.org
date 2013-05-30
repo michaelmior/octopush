@@ -24,7 +24,7 @@ Octopush is a push server for creating awesome real-time web-applications with m
 
 *** Server-side
     : octopush
-    : --host <connect backend to this host (default: tcp://127.0.0.1:3000)>
+    : --host <bind backend to this host (default: tcp://*:3000)>
     : --port <bind frontend to this port (default: 3000)>
     : --authurl <auth against this backend> (Untested)
     : --user <run as this user>
@@ -34,8 +34,6 @@ Octopush is a push server for creating awesome real-time web-applications with m
     : --ssl <use ssl encryption>
     : --key <ssl keyfile>
     : --cert <ssl certfile>
-
-    Keep in mind that it's the publisher (backend library) that binds and the server that connects to it
 
 ** Features
 **** Easily integrated
