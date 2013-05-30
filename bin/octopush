@@ -87,6 +87,9 @@ app.get('/', function (req, res) {
 app.get('/client.js', function (req, res) {
     res.sendfile(__dirname.replace(/bin$/, "") + 'usr/share/octopush/client.js');
 });
+app.get('/robots.txt', function (req, res) {
+    res.sendfile(__dirname.replace(/bin$/, "") + 'usr/share/octopush/robots.txt');
+});
 app.use("/static", express.static(__dirname.replace(/bin$/, "") + 'usr/share/octopush/'))
 
 io.sockets.on("connection", function(socket) {
@@ -208,9 +211,16 @@ var argv = require('optimist')
     .default("port", 3001)
     .default("authurl", undefined) //HTTP-auth url
     .default("sdebug", 1) //Socket.io debug
+    .default("user", false)
+    .default("group", false)
     .argv;
 if(typeof(argv.authurl) !== "undefined")
     argv.authurl = url.parse(argv.authurl);
 io.set('log level', argv.sdebug)
-server.listen(argv.port);
 api.init(argv.host);
+server.listen(argv.port, function() {
+    if(argv.user !== false)
+	process.setuid(argv.user);
+    if(argv.group)
+	process.setgid(argv.group);
+});
