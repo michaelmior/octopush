@@ -1,5 +1,5 @@
 var Push = new Octopush("http://localhost:3001");
-Push.on("my_event", function(data) {
-    $("div#messages").append("<p>" + JSON.stringify(data) + "</p>");
+Push.on("humidity", function(data) {
+    $("div#messages").html("<p>Relative humidity is " + parseInt(data.humid) + "%</p>");
 });
 

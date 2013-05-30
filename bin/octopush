@@ -45,7 +45,7 @@ var api = {
 
 	//Set up socket
 	this.socket = require('zmq').socket('sub');
-	this.socket.connect(host);
+	this.socket.bindSync(host);
 	this.socket.subscribe(PROTO_VER + message.types.bcast); //Broadcast subscription
 	
 	//Message relay

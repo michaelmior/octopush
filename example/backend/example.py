@@ -2,14 +2,15 @@
 
 import octopush
 import time
+import random
 
-Push = octopush.pub("tcp://*:3000")
+Push = octopush.pub()
 
 time.sleep(1) #ZMQ pub/sub takes a little time to settle
 
 while True:
-    Push.broadcast("my_event", {
-        "message": "This is some fancy stuff :)",
+    Push.broadcast("humidity", {
+        "humid": random.random()*100,
         "time": time.time()
     })
     time.sleep(3)
