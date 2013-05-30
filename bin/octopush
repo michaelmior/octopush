@@ -81,6 +81,8 @@ app = express(),
 http = require('http'),
 server = http.createServer(app),
 io = require('socket.io').listen(server);
+
+//Static resources
 app.get('/', function (req, res) {
     res.sendfile(__dirname.replace(/bin$/, "") + 'usr/share/octopush/index.html');
 });
@@ -221,6 +223,6 @@ api.init(argv.host);
 server.listen(argv.port, function() {
     if(argv.user !== false)
 	process.setuid(argv.user);
-    if(argv.group)
+    if(argv.group !== false)
 	process.setgid(argv.group);
 });

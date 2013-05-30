@@ -1,7 +1,7 @@
 * Octopush
 [[./usr/share/octopush/Octopush_Logo_RGB.png]]
 
-Octopush is a push server for creating real-time web-applications.
+Octopush is a push server for creating awesome real-time web-applications with minimum hassle
 
 ** Usage
 *** Client-side
@@ -41,6 +41,9 @@ Octopush is a push server for creating real-time web-applications.
 
 **** Effortless scaling
      Thanks to ZeroMQ scaling horizontally is just a matter of adding more nodes and having users connect to them, the backend will automatically start to receive messages
+
+**** Brokerless design
+     No brokers means no single point of failure and no single bottleneck
 
 ** Backend libraries
 **** Python: [[https://github.com/adisbladis/octopush-python]]
