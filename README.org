@@ -49,7 +49,7 @@ Octopush is a push server for creating awesome real-time web-applications with m
      Authentication is handled through your own service with cookies, no need to have some special token for authentication.
 
 **** Effortless scaling
-     Thanks to ZeroMQ scaling horizontally is just a matter of adding more nodes and having users connect to them, the backend will automatically start to receive messages
+     Thanks to ZeroMQ scaling horizontally is just a matter of adding more nodes and adding them to your code, as long as they are in the pool it doesn't matter if they come and go
 
 **** Brokerless design
      No brokers means no single point of failure and no single bottleneck
