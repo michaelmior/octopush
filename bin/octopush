@@ -22,8 +22,8 @@
 PROTO_VER = "0";
 
 var argv = require('optimist')
-    .usage('Usage: $0 --host "tcp://127.0.0.1:3000 --port 3001 --authurl "http://127.0.0.1:8080/ws-auth"')
-    .default("host", "tcp://127.0.0.1:3000") //Backen listen host
+    .usage('Usage: $0 --host "tcp://*:3000" --port 3001 --authurl "http://127.0.0.1:8080/ws-auth"')
+    .default("host", "tcp://*:3000") //Backen listen host
     .default("port", 3001) //Web listen port
     .default("authurl", undefined) //HTTP-auth url
     .default("sdebug", 1) //Socket.io debug
@@ -45,7 +45,7 @@ var api = {
 
 	//Set up socket
 	this.socket = require('zmq').socket('sub');
-	this.socket.connect(host);
+	this.socket.bindSync(host);
 	this.socket.subscribe(PROTO_VER + message.types.bcast); //Broadcast subscription
 	
 	//Message relay

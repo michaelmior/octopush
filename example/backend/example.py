@@ -3,7 +3,7 @@
 import octopush
 import time
 
-Push = octopush.pub("tcp://*:3000")
+Push = octopush.pub("tcp://127.0.0.1:3000")
 
 time.sleep(1) #ZMQ pub/sub takes a little time to settle
 
