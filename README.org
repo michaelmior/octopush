@@ -49,10 +49,7 @@ Octopush is a push server for creating awesome real-time web-applications with m
 **** Effortless scaling
      Thanks to ZeroMQ scaling horizontally is just a matter of adding more nodes and adding them to your code, as long as they are in the pool it doesn't matter if they come and go
 
-**** Brokerless design
-     No brokers means no single point of failure and no single bottleneck
-
-** Backend libraries
+** Publisher libraries
 **** Python: [[https://github.com/adisbladis/octopush-python]]
 
 ** Current state
