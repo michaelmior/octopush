@@ -50,7 +50,12 @@ var api = {
 	
 	//Message relay
 	this.socket.on('message', function(envelope, msg) {
-	    msg = JSON.parse(msg.toString());
+	    try {
+		msg = JSON.parse(msg.toString());
+	    } catch(err) {
+		console.error("Got non-json data '" + msg.toString() + "' for envelope '" + envelope.toString() + "'");
+		return;
+	    }
 	    envelope = envelope.toString();
 
 	    switch(envelope[1]) {
