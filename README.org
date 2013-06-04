@@ -51,6 +51,7 @@ Octopush is a push server for creating awesome real-time web-applications with m
 
 ** Publisher libraries
 **** Python: [[https://github.com/adisbladis/octopush-python]]
+**** Ruby: On my todo-list
 
 ** Current state
    Active development, don't put this up in production just yet
