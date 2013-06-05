@@ -43,7 +43,7 @@ function Octopush(url) {
         that.socket.on("chans", function(data) {
             that.chans = data;
         });
-    }
+    };
 
     //Include socketio
     var head = document.getElementsByTagName('head')[0];
@@ -56,17 +56,20 @@ function Octopush(url) {
     //User functions
     this.on = function(event, callback) {
         that.events[event] = callback;
-    }
+    };
+
     this.join = function(channel) {
-        var obj = {chan: channel}
+        var obj = {chan: channel};
         if(channel[0] === "!")
-            obj.cookie = document.cookie
+            obj.cookie = document.cookie;
         that.socket.emit("join", {chan: channel});
-    }
+    };
+
     this.part = function(channel) {
         that.socket.emit("part", channel);
-    }
+    };
+
     this.auth = function() {
         that.socket.emit("auth", document.cookie);
-    }
+    };
 }
