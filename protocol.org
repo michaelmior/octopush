@@ -80,9 +80,6 @@
      Channel is the channel or userid
      Channel is not mandatory for broadcast messages
 
-**** Delimiter
-     The header delimiter is a space
-
 **** Payload
      Payload is a string-encoded JSON object with this structure:
 : {
