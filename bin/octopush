@@ -43,39 +43,39 @@ var api = {
 
     init: function(host) {
 
-	//Set up socket
-	this.socket = require('zmq').socket('sub');
-	this.socket.bindSync(host);
-	this.socket.subscribe(PROTO_VER + message.types.bcast); //Broadcast subscription
-	
-	//Message relay
-	this.socket.on('message', function(envelope, msg) {
-	    try {
-		msg = JSON.parse(msg.toString());
-	    } catch(err) {
-		if(msg && envelope) {
-		    console.error("Got non-json data '" + msg.toString() + "' for envelope '" + envelope.toString() + "'");
-		} else {
-		    console.log("Got malformed data '" + envelope.toString() + "', are you sending a non-multipart message?");
-		}
-		return;
-	    }
-	    envelope = envelope.toString();
+        //Set up socket
+        this.socket = require('zmq').socket('sub');
+        this.socket.bindSync(host);
+        this.socket.subscribe(PROTO_VER + message.types.bcast); //Broadcast subscription
 
-	    switch(envelope[1]) {
-	    case message.types.bcast:
-		io.sockets.emit("message", msg);
-		break;
-	    case message.types.chan:
-		io.sockets.in(message.types.chan + envelope.slice(2, envelope.length)).emit("message", msg)
-		break;
-	    case message.types.user:
-		io.sockets.in(message.types.user + envelope.slice(2, envelope.length)).emit("message", msg)
-		break;
-	    }
-	});
+        //Message relay
+        this.socket.on('message', function(envelope, msg) {
+            try {
+                msg = JSON.parse(msg.toString());
+            } catch(err) {
+                if(msg && envelope) {
+                    console.error("Got non-json data '" + msg.toString() + "' for envelope '" + envelope.toString() + "'");
+                } else {
+                    console.log("Got malformed data '" + envelope.toString() + "', are you sending a non-multipart message?");
+                }
+                return;
+            }
+            envelope = envelope.toString();
+
+            switch(envelope[1]) {
+            case message.types.bcast:
+                io.sockets.emit("message", msg);
+                break;
+            case message.types.chan:
+                io.sockets.in(message.types.chan + envelope.slice(2, envelope.length)).emit("message", msg);
+                break;
+            case message.types.user:
+                io.sockets.in(message.types.user + envelope.slice(2, envelope.length)).emit("message", msg);
+                break;
+            }
+        });
     }
-}
+};
 
 var message = {
     /*
@@ -83,19 +83,18 @@ var message = {
     */
 
     parse: function(msg) {
-	msg = msg.toString();
-	var i = msg.indexOf(" ");
-	msg = [msg.slice(0,i), JSON.parse(msg.slice(i+1))]
-	return msg;
+        msg = msg.toString();
+        var i = msg.indexOf(" ");
+        msg = [msg.slice(0,i), JSON.parse(msg.slice(i+1))];
+        return msg;
     },
 
     types: {
-	bcast: "0",
-	chan: "1",
-	user: "2"
+        bcast: "0",
+        chan: "1",
+        user: "2"
     }
-
-}
+};
 
 /*
   Websocket listen & socket.io provider
@@ -105,7 +104,7 @@ app = express();
 if(argv.ssl) {
 
     if(typeof(argv.key) === "undefined" || typeof(argv.cert) === "undefined")
-	throw Error("Cert or keyfile undefined")
+	throw Error("Cert or keyfile undefined");
 
     var http = require('https');
     var fs = require("fs");
@@ -132,7 +131,7 @@ app.get('/client.js', function (req, res) {
 app.get('/robots.txt', function (req, res) {
     res.sendfile(__dirname.replace(/bin$/, "") + 'usr/share/octopush/robots.txt');
 });
-app.use("/static", express.static(__dirname.replace(/bin$/, "") + 'usr/share/octopush/'))
+app.use("/static", express.static(__dirname.replace(/bin$/, "") + 'usr/share/octopush/'));
 
 io.sockets.on("connection", function(socket) {
     /*
@@ -143,117 +142,115 @@ io.sockets.on("connection", function(socket) {
 
     socket.on("auth", function(data) {
 
-	if(typeof(argv.authurl) === "undefined") {
-	    socket.emit("auth", 2);
-	    return;
-	}
+        if(typeof(argv.authurl) === "undefined") {
+            socket.emit("auth", 2);
+            return;
+        }
 
-	//User auth request
-	var req = http.request({
-	    hostname: argv.authurl.hostname,
-	    port: argv.authurl.port,
-	    path: argv.authurl.path,
-	    method: 'GET',
-	    headers: {
-		Cookie: data
-	    }
-	}, function(resp) {
-	    var user = "";
-	    resp.on("data", function(chunk) {
-		user+=chunk;
-	    });
-	    resp.on("end", function() {
-		if(resp.statusCode === 200) {
-		    socket.user = user;
-		    socket.emit("auth", 0);
-		    api.socket.subscribe(PROTO_VER + message.types.user + socket.user);
-		} else {
-		    socket.emit("auth", 1);
-		}
-	    });
-	}).end();
-	
+        //User auth request
+        var req = http.request({
+            hostname: argv.authurl.hostname,
+            port: argv.authurl.port,
+            path: argv.authurl.path,
+            method: 'GET',
+            headers: {
+                Cookie: data
+            }
+        }, function(resp) {
+            var user = "";
+            resp.on("data", function(chunk) {
+                user+=chunk;
+            });
+            resp.on("end", function() {
+                if(resp.statusCode === 200) {
+                    socket.user = user;
+                    socket.emit("auth", 0);
+                    api.socket.subscribe(PROTO_VER + message.types.user + socket.user);
+                } else {
+                    socket.emit("auth", 1);
+                }
+            });
+        }).end();
     });
 
     socket.on("join", function(data) {
 
-	var callback = function() {
-	    socket.join(message.types.chan + data.chan);
-	    api.socket.subscribe(PROTO_VER + message.types.chan + data.chan);
-	}
+        var callback = function() {
+            socket.join(message.types.chan + data.chan);
+            api.socket.subscribe(PROTO_VER + message.types.chan + data.chan);
+        };
 
-	if(!("/" + message.types.chan + data in io.sockets.manager.roomClients[socket.id])) {
-	    switch(data.chan[0]) {
+        if(!("/" + message.types.chan + data in io.sockets.manager.roomClients[socket.id])) {
+            switch(data.chan[0]) {
 
-	    case "!": //Private channel
+            case "!": //Private channel
 
-		if(typeof(argv.authurl) === "undefined")
-		    return;
+                if(typeof(argv.authurl) === "undefined")
+                    return;
 
-		//Channel auth request
-		var req = http.request({
-		    hostname: argv.authurl.hostname,
-		    port: argv.authurl.port,
-		    path: argv.authurl.path + "?chan=" + data.chan,
-		    method: 'GET',
-		    headers: {
-			Cookie: data.cookie
-		    }
-		}, function(resp) {
-		    resp.on("end", function() {
-			if(resp.statusCode === 200)
-			    callback();
-		    });
-		}).end();
-		break;
+                //Channel auth request
+                var req = http.request({
+                    hostname: argv.authurl.hostname,
+                    port: argv.authurl.port,
+                    path: argv.authurl.path + "?chan=" + data.chan,
+                    method: 'GET',
+                    headers: {
+                        Cookie: data.cookie
+                    }
+                }, function(resp) {
+                    resp.on("end", function() {
+                        if(resp.statusCode === 200)
+                            callback();
+                    });
+                }).end();
+                break;
 
-	    case "#": //Authed channel
-		if(socket.user != false)
-		    callback();
-		break;
+            case "#": //Authed channel
+                if(socket.user !== false)
+                    callback();
+                break;
 
-	    default: //Public channel
-		callback();
-		break;
-
-	    }
-	}
+            default: //Public channel
+                callback();
+                break;
+            }
+        }
     });
 
     socket.on("part", function(data) {
-	if("/" + message.types.chan + data in io.sockets.manager.roomClients[socket.id]) {
-	    socket.leave(message.types.chan + data);
-	    api.socket.unsubscribe(PROTO_VER + message.types.chan + data);
-	}
+        if("/" + message.types.chan + data in io.sockets.manager.roomClients[socket.id]) {
+            socket.leave(message.types.chan + data);
+            api.socket.unsubscribe(PROTO_VER + message.types.chan + data);
+        }
     });
 
     socket.on("disconnect", function() {
 
-	//ZMQ channel subscription cleanup
-	for(var i in io.sockets.manager.roomClients[socket.id]) {
-	    if(i !== "") {
-		i=i.slice(1, i.length);
-		if("/" + i in io.sockets.manager.roomClients[socket.id])
-		    api.socket.unsubscribe(PROTO_VER + message.types.chan + i);
-	    }
-	}
+        //ZMQ channel subscription cleanup
+        for(var i in io.sockets.manager.roomClients[socket.id]) {
+            if(i !== "") {
+                i=i.slice(1, i.length);
+                if("/" + i in io.sockets.manager.roomClients[socket.id])
+                    api.socket.unsubscribe(PROTO_VER + message.types.chan + i);
+            }
+        }
 
-	//ZMQ user subscription cleanup
-	if(socket.authed != false)
-	    api.socket.subscribe(PROTO_VER + message.types.user + socket.user);
+        //ZMQ user subscription cleanup
+        if(socket.authed !== false)
+            api.socket.subscribe(PROTO_VER + message.types.user + socket.user);
     });
 });
 
 /*
   Init
 */
-io.set('log level', argv.sdebug)
+io.set('log level', argv.sdebug);
 api.init(argv.host);
 server.listen(argv.port, function() {
 
     if(argv.user !== false)
-	process.setuid(argv.user);
+        process.setuid(argv.user);
     if(argv.group !== false)
-	process.setgid(argv.group);
+        process.setgid(argv.group);
 
 });
