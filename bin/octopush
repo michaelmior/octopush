@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-//-*- mode: javascript -*-
+//-*- mode:javascript; tab-width:4; intent-tabs-mode:nil;  -*-
 /*
   Octopush - A scale out realtime websocket-push server
   Copyright (C) 2013 Adam Höse

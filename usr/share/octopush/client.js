@@ -1,3 +1,5 @@
+//-*- mode:javascript; tab-width:4; intent-tabs-mode:nil;  -*-
+
 function Octopush(url) {
 
     this.events = {};
