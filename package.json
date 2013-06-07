@@ -17,7 +17,8 @@
 	"optimist": ">=0.5",
 	"socket.io": ">=0.9",
 	"zmq": ">=2.4",
-	"express": ">=3.2.5"
+	"express": ">=3.2.5",
+	"socket.io-client": ">=0.9.11"
     },
     "bin": {
 	"octopush": "bin/octopush"
